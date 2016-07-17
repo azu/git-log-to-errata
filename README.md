@@ -2,6 +2,9 @@
 
 Git log to errata list.
 
+1. Get all modified diff that matches file pattern.
+2. Create errata data
+
 ## Install
 
 Install with [npm](https://www.npmjs.com/):
