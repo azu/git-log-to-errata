@@ -12,6 +12,7 @@
     "url": "https://github.com/azu/git-log-to-errata/issues"
   },
   "files": [
+    "bin/",
     "src/",
     "lib/"
   ],
