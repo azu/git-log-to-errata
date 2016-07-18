@@ -7,6 +7,7 @@ const assert = require("assert");
 import CommitVisitor from "./CommitVisitor";
 /**
  * @typedef {Object} ModifiedDiff
+ * @property {string} commitMessage
  * @property {string} deleted
  * @property {string} added
  * @property {string} filePath
@@ -43,6 +44,7 @@ export default class GitHistory {
                     // Listen for commit events from the history.
                     let useFilePath = undefined;
                     history.on("commit", function(commit) {
+                        const commitMessage = commit.message();
                         const promise = visitor.visit(commit, (type, payload) => {
                             if (type === CommitVisitor.Types.patch) {
                                 const patch = payload;
@@ -58,12 +60,14 @@ export default class GitHistory {
                             if (type === CommitVisitor.Types.lines) {
                                 const lines = payload;
                                 let diff = {
+                                    commitMessage,
                                     filePath: useFilePath
                                 };
                                 lines.forEach(function(line) {
                                     if (diff["deleted"] && diff["added"]) {
                                         diffList.push(diff);
                                         diff = {
+                                            commitMessage,
                                             filePath: useFilePath
                                         };
                                     }
