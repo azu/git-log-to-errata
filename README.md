@@ -13,7 +13,20 @@ Install with [npm](https://www.npmjs.com/):
 
 ## Usage
 
-- [ ] Write usage instructions
+
+    Usage
+      $ git-log-to-errata <path-to-dir>
+
+    <path-to-dir> should have ".git" directory
+
+    Options
+      --branch branch name
+      --pattern filter file pattern(e.g. "**/*.md"
+ 
+    Examples
+      $ git-log-to-errata --pattern "**/*.md" path/to/dir
+      output JSON 🌈
+
 
 ## Changelog
 
