@@ -5,7 +5,7 @@ require('array.prototype.find').shim();
  * @param {ModifiedDiff} modifiedDiff
  */
 const defaultPrePredicate = (modifiedDiff) => {
-    const filterWord = /(\bfix|typo|修正)/;
+    const filterWord = /(Update.*\.md|\bfix|typo|修正)/;
     return filterWord.test(modifiedDiff.commitMessage);
 };
 /**
@@ -62,6 +62,6 @@ export default class DiffFilter {
      * @param {function(ModifiedTokenDiff):boolean}predicate
      */
     static postFilter(modifiedTokenDiffs, predicate = defaultPostPredicate) {
-        return unique(modifiedTokenDiffs.filter(predicate));
+        return modifiedTokenDiffs.filter(predicate);
     }
 }

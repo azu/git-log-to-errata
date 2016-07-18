@@ -16,6 +16,15 @@ export default class MatcherTokenizer {
      * @property {string} newText
      */
     /**
+     * @typedef {Object} ModifiedTokenMatchDiff
+     * @property {Object[]} oldTokens
+     * @property {string} oldText
+     * @property {Object[]} newTokens
+     * @property {string} newText
+     * @property {number} start
+     * @property {number} end
+     */
+    /**
      * @param {ModifiedDiff[]} modifiedDiffs
      * @returns {Promise.<ModifiedTokenDiff[]>}
      */
@@ -56,11 +65,11 @@ export default class MatcherTokenizer {
     /**
      * 異なるtoken + 前後1 のtokenを集めた返す
      * @param tokenDiff
-     * @returns {ModifiedTokenDiff[]}
+     * @returns {ModifiedTokenMatchDiff[]}
      */
     static createTokenDiffs(tokenDiff) {
         const results = [];
-        let result = {oldTokens: [], newTokens: []};
+        let result = {oldTokens: [], newTokens: [], start: undefined, end: undefined};
         let isDifferent = false;
         const {oldTokens, newTokens} = tokenDiff;
         oldTokens.forEach((oldToken, index) => {
@@ -74,7 +83,7 @@ export default class MatcherTokenizer {
                     result.oldTokens.push(oldToken);
                     result.newTokens.push(newToken);
                     results.push(result);
-                    result = {oldTokens: [], newTokens: []};
+                    result = {oldTokens: [], newTokens: [], start: undefined, end: undefined};
                 }
                 isDifferent = false;
                 return;
@@ -92,8 +101,14 @@ export default class MatcherTokenizer {
                 }
             }
             // 2
+            // record start
+            if (result.start === undefined) {
+                result.start = result.oldTokens.length;
+            }
             result.oldTokens.push(oldToken);
             result.newTokens.push(newToken);
+            // update end
+            result.end = result.oldTokens.length;
         });
         return results.map(result => {
             const oldText = result.oldTokens.map(token => token.surface_form).join("");
