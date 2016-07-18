@@ -25,8 +25,8 @@ Install with [npm](https://www.npmjs.com/):
  
     Examples
       $ git-log-to-errata --pattern "**/*.md" path/to/dir
-      output JSON 🌈
-
+      output JSON
+      
 
 ## Changelog
 

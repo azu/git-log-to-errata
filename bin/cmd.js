@@ -13,7 +13,7 @@ const cli = meow(`
  
     Examples
       $ git-log-to-errata --pattern "**/*.md" path/to/dir
-      JSON 🌈
+      JSON
 `);
 const repository = cli.input[0];
 const flags = cli.flags;
