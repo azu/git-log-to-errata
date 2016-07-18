@@ -1,17 +1,27 @@
 import GitHistory from "./GitHistory";
 import MatcherTokenizer from "./MatcherTokenizer";
-module.exports = function(repository, pattern = "*.md") {
+import DiffFilter from "./DiffFilter";
+module.exports = function({
+    repository,
+    branch = "master",
+    pattern = "**/*.md",
+}) {
     const history = new GitHistory(repository);
     return history.getModifiedDiffs({
-        filePattern: pattern
+        filePattern: pattern,
+        branch
     }).then(modifiedDiffs => {
-        return MatcherTokenizer.toTokenize(modifiedDiffs).then(modifiedTokenDiffs => {
-            let results = [];
+        console.log("pre", modifiedDiffs.length);
+        const filteredDiffs = DiffFilter.preFilter(modifiedDiffs);
+        return MatcherTokenizer.toTokenize(filteredDiffs).then(modifiedTokenDiffs => {
+            let resultModifiedTokenDiffs = [];
             modifiedTokenDiffs.forEach(tokenDiff => {
                 const array = MatcherTokenizer.createTokenDiffs(tokenDiff);
-                results = results.concat(array);
+                resultModifiedTokenDiffs = resultModifiedTokenDiffs.concat(array);
             });
-            return results;
+            const postFilteredTokenDiffs = DiffFilter.postFilter(resultModifiedTokenDiffs);
+            console.log("post", postFilteredTokenDiffs.length);
+            return postFilteredTokenDiffs
         });
     });
 };

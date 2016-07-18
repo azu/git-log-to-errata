@@ -11,24 +11,41 @@ export default class MatcherTokenizer {
     /**
      * @typedef {Object} ModifiedTokenDiff
      * @property {Object[]} oldTokens
+     * @property {string} oldText
      * @property {Object[]} newTokens
+     * @property {string} newText
      */
     /**
      * @param {ModifiedDiff[]} modifiedDiffs
      * @returns {Promise.<ModifiedTokenDiff[]>}
      */
     static toTokenize(modifiedDiffs) {
+        const removeWordPosition = (token) => {
+            delete token.word_position;
+            return token;
+        };
         return new Promise((resolve, reject) => {
             const promises = modifiedDiffs.map(modifiedDiff => {
                 const {added, deleted} = modifiedDiff;
-                const result = {};
-                const oldText = remark.process(deleted).contents.trim();
-                const newText = remark.process(added).contents.trim();
+                let oldText = deleted;
+                try {
+                    oldText = remark.process(deleted).contents.trim();
+                } catch (e) {
+                }
+                let newText = added;
+                try {
+                    newText = remark.process(added).contents.trim()
+                } catch (e) {
+                }
+                const result = {
+                    oldText,
+                    newText
+                };
                 const addedTokenPromise = tokenize(newText);
                 const deletedTokenPromise = tokenize(oldText);
                 return Promise.all([deletedTokenPromise, addedTokenPromise]).then(([deletedTokens, addedTokens]) => {
-                    result.newTokens = addedTokens;
-                    result.oldTokens = deletedTokens;
+                    result.newTokens = addedTokens.map(removeWordPosition);
+                    result.oldTokens = deletedTokens.map(removeWordPosition);
                     return result;
                 });
             });
@@ -36,7 +53,11 @@ export default class MatcherTokenizer {
         });
     }
 
-    // 異なるtoken -+ 1 のtokenを集めた返す
+    /**
+     * 異なるtoken + 前後1 のtokenを集めた返す
+     * @param tokenDiff
+     * @returns {ModifiedTokenDiff[]}
+     */
     static createTokenDiffs(tokenDiff) {
         const results = [];
         let result = {oldTokens: [], newTokens: []};
@@ -74,6 +95,13 @@ export default class MatcherTokenizer {
             result.oldTokens.push(oldToken);
             result.newTokens.push(newToken);
         });
-        return results;
+        return results.map(result => {
+            const oldText = result.oldTokens.map(token => token.surface_form).join("");
+            const newText = result.newTokens.map(token => token.surface_form).join("");
+            return ObjectAssign({}, result, {
+                oldText,
+                newText
+            })
+        });
     }
 }

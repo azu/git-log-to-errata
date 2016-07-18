@@ -23,17 +23,19 @@ export default class GitHistory {
 
     /**
      * @param {string} filePattern
+     * @param {string} branch
      * @returns {Promise.<ModifiedDiff[]>}
      */
     getModifiedDiffs({
-        filePattern
+        filePattern,
+        branch = "master"
     }) {
         assert(filePattern, "`filePattern` should be set. e.g.) `*.md`");
         const visitor = new CommitVisitor();
         return new Promise((resolve, reject) => {
             Git.Repository.open(this.repostiroyPath)
                 .then(function(repo) {
-                    return repo.getMasterCommit();
+                    return repo.getBranchCommit(branch);
                 })
                 // Display information about commits on master.
                 .then(function(firstCommitOnMaster) {
