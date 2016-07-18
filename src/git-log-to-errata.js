@@ -1,3 +1,4 @@
+"use strict";
 import GitHistory from "./GitHistory";
 import MatcherTokenizer from "./MatcherTokenizer";
 import DiffFilter from "./DiffFilter";
