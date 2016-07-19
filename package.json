@@ -19,6 +19,9 @@
   "version": "1.0.0",
   "description": "Git log to errata list.",
   "main": "lib/git-log-to-errata.js",
+  "bin": {
+    "git-log-to-errata": "bin/cmd.js"
+  },
   "directories": {
     "test": "test"
   },
