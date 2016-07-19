@@ -5,7 +5,7 @@ require('array.prototype.find').shim();
  * @param {ModifiedDiff} modifiedDiff
  */
 const defaultPrePredicate = (modifiedDiff) => {
-    const filterWord = /(Update.*\.md|\bfix|typo|修正)/;
+    const filterWord = /typo/;
     return filterWord.test(modifiedDiff.commitMessage);
 };
 /**
