@@ -16,7 +16,7 @@
     "src/",
     "lib/"
   ],
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Git log to errata list.",
   "main": "lib/git-log-to-errata.js",
   "bin": {
